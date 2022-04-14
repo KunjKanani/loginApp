@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -12,9 +15,12 @@ class SignInController extends GetxController {
   Future signIn() async {
     if (!isLoading.value) {
       isLoading.value = true;
+      var bytes = utf8.encode(passwordController.text); // data being hashed
+
+      var digest = sha1.convert(bytes);
       String result = await ApiService.to.signInUser({
         'email': emailController.text,
-        'password': passwordController.text,
+        'password': digest.toString(),
       });
 
       if (result == 'success') {

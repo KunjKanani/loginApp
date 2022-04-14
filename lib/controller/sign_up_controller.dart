@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:login_flutter_app/constant/routes.dart';
@@ -14,12 +16,18 @@ class SignUpController extends GetxController {
   Future signUp() async {
     if (!isLoading.value) {
       isLoading.value = true;
+
+      var bytes = utf8.encode(passwordController.text); // data being hashed
+
+      var digest = sha1.convert(bytes);
+
+      // String result = "";
       String result = await ApiService.to.signUpUser({
         'name': nameController.text,
         'email': emailController.text,
-        'password': passwordController.text,
+        'password': digest.toString(),
       });
-      log('RES: $result');
+      // log('RES: $result');
 
       if (result == 'success') {
         Get.snackbar(
